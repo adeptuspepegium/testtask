@@ -1,0 +1,32 @@
+CREATE TABLE [dbo].[Courses](
+	[Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT newid(),
+	[Name] [nvarchar](255) NOT NULL,
+	[CreatedAt] datetime default getdate()
+)
+
+CREATE TABLE [dbo].[CourseSchedules](
+	[Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT newid(),
+	[CourseId] [uniqueidentifier] NOT NULL,
+	[StartDate] [date] NOT NULL,
+	[EndDate] [date] NOT NULL,
+	[ParticipantsLimit] [int] NOT NULL,
+	[CreatedAt] datetime default getdate()
+	CONSTRAINT [FK_CourseSchedules_Course] FOREIGN KEY ([CourseId]) REFERENCES [dbo].[Courses]([Id])
+)
+
+CREATE TABLE [dbo].[Students](
+	[Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT newid(),
+	[Name] [nvarchar](50) NOT NULL,
+	[Mail] [nvarchar](50) NOT NULL UNIQUE,
+	[CreatedAt] datetime default getdate()
+)
+
+CREATE TABLE [dbo].[Enrollments] (
+	[Id] [uniqueidentifier] NOT NULL PRIMARY KEY DEFAULT newid(),
+	[CourseScheduleId] [uniqueidentifier] NOT NULL,
+	[StudentId] [uniqueidentifier] NOT NULL,
+	[CreatedAt] datetime default getdate()
+	CONSTRAINT [FK_Enrollments_CourseSchedule] FOREIGN KEY ([CourseScheduleId]) REFERENCES [dbo].[CourseSchedules]([Id]),
+	CONSTRAINT [FK_Enrollments_Student] FOREIGN KEY ([StudentId]) REFERENCES [dbo].[Students]([Id]),
+	CONSTRAINT [UQ_Enrollments] UNIQUE ([CourseScheduleId], [StudentId])
+)
